@@ -1,13 +1,21 @@
 var bandsintown = require('bandsintown');
-var spotify = require('node-spotify-api');
+var Spotify = require('node-spotify-api');
 var inquirer = require('inquirer');
 var axios = require('axios');
 var moment = require('moment');
-var fs= require('fs');
-// var spotify = new Spotify({
-//     id: ce5052f7728d467f9b3fb4343229a04a,
-//     secret: b5990f73f941484bbb1ec9baaee60970
-// });
+var fs = require('fs');
+var random=require('./random.txt');
+// require('dotenv').config()
+// var db = require('./.env');
+
+// const result = dotenv.config()
+
+// if (result.error) {
+//     throw result.error
+// }
+
+// console.log(result.parsed)
+
 
 inquirer.prompt([{
     type: 'list',
@@ -27,7 +35,7 @@ inquirer.prompt([{
             ])
                 .then(function (movieResponse) {
                     var movieQueryUrl = "http://www.omdbapi.com/?t=" + movieResponse.movieName + "&apikey=trilogy";
-                    axios.get(movieQueryUrl).then(function (response) {
+                    bandsintown.get(movieQueryUrl).then(function (response) {
                         if (response.data.Title === undefined) {
                             console.log("If you haven't watched Mr. Nobody then you should: http://www.imdb.com/title/tt0485947/");
                             console.log("It's on Netflix");
@@ -63,25 +71,38 @@ inquirer.prompt([{
                     })
                 })
         }
-        else if(inquirerResponse.option==='Do What It Says'){
-            fs.readFile('random.txt','UTF8',function(err,data){
-                if(err){
+        else if (inquirerResponse.option === 'Do What It Says') {
+            fs.readFile('./random.txt', 'UTF8', function (err, data) {
+                if (err) {
                     console.log(err);
                 }
                 console.log(data);
             })
 
         }
-        // else if (inquirerResponse.option === 'Song') {
-        //     inquirer.prompt([
-        //         {
-        //             type: 'input',
-        //             message: 'What song would you like information on?',
-        //             name: 'songName'
-        //         }
-        //     ])
-        //         .then(function (songResponse) {
-        //             var songQueryUrl = 'https://api.spotify.com/v1/search'
-        //         });
-        // };
+        else if (inquirerResponse.option === 'Song') {
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    message: 'What song would you like information on?',
+                    name: 'songName'
+                }
+            ])
+                .then(function (songResponse) {
+                    var spotify = new Spotify({
+                        id: 'ce5052f7728d467f9b3fb4343229a04a',
+                        secret: 'b5990f73f941484bbb1ec9baaee60970'
+
+                    });
+                    spotify.search({ type: 'track', query: songResponse.songName, limit: 3 }, function (err, data) {
+                        if (err) {
+                            return console.log('Error occurred: ' + err);
+                        }
+
+                        console.log(data);
+                    });
+
+                })
+
+        };
     });
