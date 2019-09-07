@@ -62,10 +62,18 @@ inquirer.prompt([{
                 .then(function (concertResponse) {
                     var concertQueryUrl = 'https://rest.bandsintown.com/artists/' + concertResponse.concertName + '/events?app_id=codingbootcamp';
                     axios.get(concertQueryUrl).then(function (response) {
-                        console.log('This Concert Is At:' + response.data[0].venue.name);
-                        console.log('This Venue Is In:' + response.data[0].venue.city + ',' + response.data[0].venue.region);
-                        console.log('This Concert Is On:' + moment(response.data[0].datetime).format('MMM D YYYY'));
-
+                        let concertInfo=`This Concert Is At:${response.data[0].venue.name}
+                        \nThis Venue Is In:${response.data[0].venue.city}
+                        \nThis Concert Is On:${moment(response.data[0].datetime).format('MMM D YYYY')}`
+                        // console.log('This Concert Is At:' + response.data[0].venue.name);
+                        // console.log('This Venue Is In:' + response.data[0].venue.city + ',' + response.data[0].venue.region);
+                        // console.log('This Concert Is On:' + moment(response.data[0].datetime).format('MMM D YYYY'));
+                        console.log(concertInfo);
+                        fs.appendFile('concertLog.txt',concertInfo,(err)=>{
+                            if(err){throw err};
+                            console.log('Inquiry Appended To Log');
+                        })
+                        
                     })
                 })
         }
