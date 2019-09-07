@@ -5,7 +5,6 @@ var axios = require('axios');
 var moment = require('moment');
 var fs = require('fs');
 var random = require('./random.txt');
-// var db = require('./.env');
 require('dotenv').config();
 
 
@@ -28,7 +27,7 @@ inquirer.prompt([{
                 .then(function (movieResponse) {
                     var movieQueryUrl = "http://www.omdbapi.com/?t=" + movieResponse.movieName + "&apikey=trilogy";
                     axios.get(movieQueryUrl).then(function (response) {
-                        let movieInfo=`Title:${response.data.Title}
+                        let movieInfo = `\nTitle:${response.data.Title}
                         \nReleased In:${response.data.Year}
                         \nIMDB Rates This Movie At:${response.data.Ratings[0].Value}
                         \nRotten Tomatoes Rates This Movie At: ${response.data.Ratings[1].Value}
@@ -43,8 +42,8 @@ inquirer.prompt([{
                         }
                         else {
                             console.log(movieInfo);
-                            fs.appendFile('movieLog.txt',movieInfo,(err)=>{
-                                if(err){throw err};
+                            fs.appendFile('movieLog.txt', movieInfo, (err) => {
+                                if (err) { throw err };
                                 console.log('Inquiry Appended To Log');
                             })
                         }
@@ -62,18 +61,15 @@ inquirer.prompt([{
                 .then(function (concertResponse) {
                     var concertQueryUrl = 'https://rest.bandsintown.com/artists/' + concertResponse.concertName + '/events?app_id=codingbootcamp';
                     axios.get(concertQueryUrl).then(function (response) {
-                        let concertInfo=`This Concert Is At:${response.data[0].venue.name}
+                        let concertInfo = `\nThis Concert Is At:${response.data[0].venue.name}
                         \nThis Venue Is In:${response.data[0].venue.city}
                         \nThis Concert Is On:${moment(response.data[0].datetime).format('MMM D YYYY')}`
-                        // console.log('This Concert Is At:' + response.data[0].venue.name);
-                        // console.log('This Venue Is In:' + response.data[0].venue.city + ',' + response.data[0].venue.region);
-                        // console.log('This Concert Is On:' + moment(response.data[0].datetime).format('MMM D YYYY'));
                         console.log(concertInfo);
-                        fs.appendFile('concertLog.txt',concertInfo,(err)=>{
-                            if(err){throw err};
+                        fs.appendFile('concertLog.txt', concertInfo, (err) => {
+                            if (err) { throw err };
                             console.log('Inquiry Appended To Log');
                         })
-                        
+
                     })
                 })
         }
@@ -101,16 +97,20 @@ inquirer.prompt([{
                     spotify
                         .search({ type: 'track', query: songResponse.songName, limit: 3 })
                         .then(function (response) {
-                            // console.log(response.tracks.items[0].name);
-                            // console.log(response.tracks.items[0].album.name);
-                            // console.log(response.tracks.items[0].artists[0].name);
-                            console.log(response.tracks.items[0].preview_url);
+                            let songInfo = `\nSong Name:${response.tracks.items[0].name}
+                            \nAlbum Name:${response.tracks.items[0].album.name}
+                            \nArtist(s):${response.tracks.items[0].artists[0].name}
+                            \nSpotify Preview Link:${response.tracks.items[0].preview_url}`
+
+                            console.log(songInfo);
+                            fs.appendFile('songLog.txt', songInfo, (err) => {
+                                if (err) { throw err };
+                                console.log('Inquiry Appended To Log');
+                            })
                         })
                         .catch(function (err) {
                             console.log(err);
                         });
-
                 })
-
         };
     });
