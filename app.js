@@ -5,7 +5,9 @@ var axios = require('axios');
 var moment = require('moment');
 var fs = require('fs');
 var random = require('./random.txt');
-var db = require('./.env');
+// var db = require('./.env');
+require('dotenv').config();
+
 
 inquirer.prompt([{
     type: 'list',
@@ -26,19 +28,25 @@ inquirer.prompt([{
                 .then(function (movieResponse) {
                     var movieQueryUrl = "http://www.omdbapi.com/?t=" + movieResponse.movieName + "&apikey=trilogy";
                     axios.get(movieQueryUrl).then(function (response) {
+                        let movieInfo=`Title:${response.data.Title}
+                        \nReleased In:${response.data.Year}
+                        \nIMDB Rates This Movie At:${response.data.Ratings[0].Value}
+                        \nRotten Tomatoes Rates This Movie At: ${response.data.Ratings[1].Value}
+                        \nThis Movie Was Produced In: ${response.data.Country}
+                        \nThis Movie Is In:${response.data.Language}
+                        \nThe Movie Plot Is:${response.data.Plot}
+                        \nActors Appearing In This Movie Are:${response.data.Actors}`;
+
                         if (movieResponse.movieName == '') {
                             console.log("If you haven't watched Mr. Nobody then you should: http://www.imdb.com/title/tt0485947/");
                             console.log("It's on Netflix");
                         }
                         else {
-                            console.log('Title:' + response.data.Title);
-                            console.log('Released In:' + response.data.Year);
-                            console.log('IMDB Rates This Movie At:' + response.data.Ratings[0].Value);
-                            console.log('Rotten Tomatoes Rates This Movies At:' + response.data.Ratings[1].Value);
-                            console.log('This Movie Was Produced In:' + response.data.Country);
-                            console.log('This Movie Is In:' + response.data.Language);
-                            console.log('This Movies Plot Is:' + response.data.Plot);
-                            console.log('Actors Appearing In This Movie Are:' + response.data.Actors);
+                            console.log(movieInfo);
+                            fs.appendFile('movieLog.txt',movieInfo,(err)=>{
+                                if(err){throw err};
+                                console.log('Inquiry Appended To Log');
+                            })
                         }
                     })
                 })
@@ -79,13 +87,16 @@ inquirer.prompt([{
             ])
                 .then(function (songResponse) {
                     var spotify = new Spotify({
-                        id: db.SPOTIFY_ID,
-                        secret: db.SPOTIFY_SECRET
+                        id: process.env.SPOTIFY_ID,
+                        secret: process.env.SPOTIFY_SECRET
                     });
                     spotify
                         .search({ type: 'track', query: songResponse.songName, limit: 3 })
                         .then(function (response) {
-                            console.log(response);
+                            // console.log(response.tracks.items[0].name);
+                            // console.log(response.tracks.items[0].album.name);
+                            // console.log(response.tracks.items[0].artists[0].name);
+                            console.log(response.tracks.items[0].preview_url);
                         })
                         .catch(function (err) {
                             console.log(err);
