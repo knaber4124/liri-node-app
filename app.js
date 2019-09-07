@@ -74,12 +74,8 @@ inquirer.prompt([{
                 })
         }
         else if (inquirerResponse.option === 'Do What It Says') {
-            // fs.readFile('./random.txt', 'UTF8', function (err, data) {
-            //     if (err) {
-            //         console.log(err);
-            //     }
-            //     console.log(data);
-            random('This is Connected');
+            
+            random();
         }
         else if (inquirerResponse.option === 'Song') {
             inquirer.prompt([

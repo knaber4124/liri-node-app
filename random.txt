@@ -1,3 +1,24 @@
-module.exports = function (msg) { 
-    console.log(msg);
-};
+var Spotify = require('node-spotify-api');
+
+
+let doThis = function (){
+        var spotify = new Spotify({
+            id: process.env.SPOTIFY_ID,
+            secret: process.env.SPOTIFY_SECRET
+            });
+            spotify
+                .search({ type: 'track', query: 'I Want It That Way', limit: 3 })
+                .then(function (response) {
+                    let songInfo = `\nSong Name:${response.tracks.items[0].name}
+                    \nAlbum Name:${response.tracks.items[0].album.name}
+                    \nArtist(s):${response.tracks.items[0].artists[0].name}
+                    \nSpotify Preview Link:${response.tracks.items[0].preview_url}`
+
+                    console.log(songInfo);
+                })
+                .catch(function (err) {
+                    console.log(err);
+               });
+}
+
+module.exports = doThis;
