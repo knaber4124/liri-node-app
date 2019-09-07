@@ -1,6 +1,3 @@
-function doThis(){
-    console.log('This Is Connected');
+module.exports = function (msg) { 
+    console.log(msg);
 };
-
-
-module.exports= doThis;

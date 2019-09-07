@@ -4,18 +4,8 @@ var inquirer = require('inquirer');
 var axios = require('axios');
 var moment = require('moment');
 var fs = require('fs');
-var random=require('./random.txt');
-// require('dotenv').config()
-// var db = require('./.env');
-
-// const result = dotenv.config()
-
-// if (result.error) {
-//     throw result.error
-// }
-
-// console.log(result.parsed)
-
+var random = require('./random.txt');
+var db = require('./.env');
 
 inquirer.prompt([{
     type: 'list',
@@ -35,8 +25,8 @@ inquirer.prompt([{
             ])
                 .then(function (movieResponse) {
                     var movieQueryUrl = "http://www.omdbapi.com/?t=" + movieResponse.movieName + "&apikey=trilogy";
-                    bandsintown.get(movieQueryUrl).then(function (response) {
-                        if (response.data.Title === undefined) {
+                    axios.get(movieQueryUrl).then(function (response) {
+                        if (movieResponse.movieName == '') {
                             console.log("If you haven't watched Mr. Nobody then you should: http://www.imdb.com/title/tt0485947/");
                             console.log("It's on Netflix");
                         }
@@ -72,13 +62,12 @@ inquirer.prompt([{
                 })
         }
         else if (inquirerResponse.option === 'Do What It Says') {
-            fs.readFile('./random.txt', 'UTF8', function (err, data) {
-                if (err) {
-                    console.log(err);
-                }
-                console.log(data);
-            })
-
+            // fs.readFile('./random.txt', 'UTF8', function (err, data) {
+            //     if (err) {
+            //         console.log(err);
+            //     }
+            //     console.log(data);
+            random('This is Connected');
         }
         else if (inquirerResponse.option === 'Song') {
             inquirer.prompt([
@@ -90,17 +79,17 @@ inquirer.prompt([{
             ])
                 .then(function (songResponse) {
                     var spotify = new Spotify({
-                        id: 'ce5052f7728d467f9b3fb4343229a04a',
-                        secret: 'b5990f73f941484bbb1ec9baaee60970'
-
+                        id: db.SPOTIFY_ID,
+                        secret: db.SPOTIFY_SECRET
                     });
-                    spotify.search({ type: 'track', query: songResponse.songName, limit: 3 }, function (err, data) {
-                        if (err) {
-                            return console.log('Error occurred: ' + err);
-                        }
-
-                        console.log(data);
-                    });
+                    spotify
+                        .search({ type: 'track', query: songResponse.songName, limit: 3 })
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
 
                 })
 
